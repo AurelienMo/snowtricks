@@ -1,0 +1,4 @@
+app:
+    resource: '@AppBundle/Actions/'
+    type: annotation
+    prefix: /
