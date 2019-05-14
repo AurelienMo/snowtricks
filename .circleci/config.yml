@@ -1,0 +1,34 @@
+version: 2
+jobs:
+    checker:
+        docker:
+            - image: circleci/php:7.2-fpm
+        steps:
+            - checkout
+            - run: sudo php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+            - run: sudo php composer-setup.php
+            - run: sudo php -r "unlink('composer-setup.php');"
+            - run: sudo php -d memory_limit=-1 composer.phar install -n --optimize-autoloader --apcu-autoloader
+            - run: sudo php -d memory_limit=-1 composer.phar dump-autoload --optimize --apcu
+            - run: php bin/console d:d:c --env=test
+            - run:
+                  name: Install PHP libzip-dev
+                  command: sudo apt-get install -y libzip-dev
+            - run:
+                  name: Install PHP zip
+                  command: sudo docker-php-ext-install zip
+            -   run:
+                    name: Check phpcs
+                    command: vendor/bin/phpcs
+            -   run:
+                    name: Check phpstan
+                    command: vendor/bin/phpstan analyze src
+            -   run:
+                    name: Check Behat
+                    command: vendor/bin/behat
+
+workflows:
+    version: 2
+    checker:
+        jobs:
+            - checker

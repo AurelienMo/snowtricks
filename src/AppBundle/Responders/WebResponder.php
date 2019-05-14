@@ -86,7 +86,9 @@ class WebResponder
                 )
             );
 
-        if ($this->requestStack->getCurrentRequest()->isMethodCacheable()) {
+        if (!\is_null($this->requestStack->getCurrentRequest()) &&
+            $this->requestStack->getCurrentRequest()->isMethodCacheable()
+        ) {
             $response->setMaxAge(3600)
                 ->setSharedMaxAge(3600);
         }

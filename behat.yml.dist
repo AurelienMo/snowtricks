@@ -1,0 +1,66 @@
+default:
+    suites:
+        default:
+            contexts:
+                - CustomMinkContext
+                - DoctrineContext:
+                    doctrine: '@doctrine'
+                    kernel: '@kernel'
+                    passwordEncoder: '@security.password_encoder'
+
+
+    extensions:
+        Behat\Symfony2Extension:
+            kernel:
+                bootstrap: features/bootstrap/bootstrap.php
+                class: AppKernel
+        Behat\MinkExtension:
+            sessions:
+                default:
+                    symfony2: ~
+
+coverage:
+    suites:
+        default:
+            contexts:
+                - CustomMinkContext
+                - DoctrineContext:
+                    doctrine: '@doctrine'
+                    kernel: '@kernel'
+                    passwordEncoder: '@security.password_encoder'
+
+    extensions:
+        Behat\Symfony2Extension:
+            kernel:
+                bootstrap: features/bootstrap/bootstrap.php
+                class: AppKernel
+        Behat\MinkExtension:
+                sessions:
+                    default:
+                        symfony2: ~
+        LeanPHP\Behat\CodeCoverage\Extension:
+          # select which driver to use when gatherig coverage data
+          drivers:
+            - local     # local Xdebug driver
+          # filter options
+          filter:
+            forceCoversAnnotation:                false
+            mapTestClassNameToCoveredClassName:   false
+            whitelist:
+              addUncoveredFilesFromWhitelist:     true
+              processUncoveredFilesFromWhitelist: false
+              include:
+                directories:
+                  'src': ~
+
+              exclude:
+                directories:
+                  'src/AppBundle/Entity': ~
+                  'src/Domain/DoctrineMigrations': ~
+                files:
+                  - src/AppBundle/AppBundle.php
+          # report configuration
+          report:
+            format:    html
+            options:
+              target: var/behat-coverage/html
